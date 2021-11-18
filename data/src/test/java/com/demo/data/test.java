@@ -55,7 +55,7 @@ public class test {
 
         //配置策略
         StrategyConfig strategy = new StrategyConfig();
-        strategy.setInclude("user");
+        strategy.setInclude("article");
         strategy.setNaming(NamingStrategy.underline_to_camel);
         strategy.setColumnNaming(NamingStrategy.underline_to_camel);
         strategy.setEntityLombokModel(true);

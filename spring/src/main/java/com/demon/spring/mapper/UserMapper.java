@@ -5,7 +5,6 @@ import com.demon.spring.pojo.User;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
-import java.util.UUID;
 
 /**
  * <p>
