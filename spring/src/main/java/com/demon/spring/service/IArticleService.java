@@ -31,4 +31,36 @@ public interface IArticleService extends IService<Article> {
      * @return
      */
     public RespBean getArticlesByname(ArticleSearchParam searchParam);
+
+    /**
+     * 发表文章
+     *
+     * @param article 发表文章的信息
+     * @return 发表文章的结果
+     */
+    public RespBean addArticle(Article article);
+
+    /**
+     * 修改文章信息
+     *
+     * @param article 要修改的文章信息
+     * @return 修改的结果
+     */
+    public RespBean editArticle(Article article);
+
+    /**
+     * 删除文章
+     *
+     * @param name 文章名
+     * @return 删除的结果
+     */
+    public RespBean deleteArticle(String name);
+
+    /**
+     * 查询用户每个月发表文章的数目
+     *
+     * @param username 用户名
+     * @return 查询的数据
+     */
+    public RespBean getArticleCount(String username);
 }

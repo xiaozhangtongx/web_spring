@@ -63,7 +63,22 @@ public interface IUserService extends IService<User> {
      *
      * @param username 用户名
      * @return 删除是结果
-     *
      */
     public RespBean deleteUser(String username);
+
+    /**
+     * 添加用户
+     *
+     * @param user 用户信息
+     * @return 添加的结果
+     */
+    public RespBean addUser(User user);
+
+    /**
+     * 修改登录密码
+     *
+     * @param user 用户信息
+     * @return 修改的结果
+     */
+    public RespBean changePwd(User user);
 }

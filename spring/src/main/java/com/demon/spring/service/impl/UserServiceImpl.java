@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.demon.spring.mapper.ArticleMapper;
+import com.demon.spring.pojo.Article;
 import com.demon.spring.pojo.User;
 import com.demon.spring.mapper.UserMapper;
 import com.demon.spring.service.IUserService;
@@ -31,6 +33,9 @@ import java.util.List;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
     @Autowired
     public UserMapper userMapper;
+
+    @Autowired
+    public ArticleMapper articleMapper;
 
     /**
      * 获取所有的用户信息
@@ -70,7 +75,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.like("username", userSearchParam.getUsername())
                 .like("email", userSearchParam.getEmail())
-                .eq("role", "user");
+                .eq("role", "user").orderByAsc("username");
+        ;
         Page<User> page = new Page<>(userSearchParam.getPage(), userSearchParam.getPageSize());
         IPage<User> userPage = userMapper.selectPage(page, queryWrapper);
         long total = userPage.getTotal();
@@ -121,6 +127,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public RespBean deleteUser(String username) {
         HashMap<String, Object> map = new HashMap<>();
         map.put("username", username);
+        articleMapper.deleteByMap(map);
         int i = userMapper.deleteByMap(map);
         System.out.println(i);
         RespBean respBean = new RespBean();
@@ -128,6 +135,40 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             respBean = respBean.error("删除失败");
         } else {
             respBean = respBean.success("删除成功");
+        }
+        return respBean;
+    }
+
+    @Override
+    public RespBean addUser(User user) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("username", user.getUsername());
+        List<User> articles = userMapper.selectList(queryWrapper);
+        RespBean respBean = new RespBean();
+        if (!articles.isEmpty()) {
+            respBean = respBean.error("该用户已存在，请直接登录！");
+        } else {
+            int insert = userMapper.insert(user);
+            if (insert == 0) {
+                respBean = respBean.error("注册失败，请稍后再试！");
+            } else {
+                respBean = respBean.success("注册成功，正在跳回登录页！");
+            }
+        }
+        return respBean;
+    }
+
+    @Override
+    public RespBean changePwd(User user) {
+        UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("username", user.getUsername()).set("password", user.getPassword());
+        Integer rows = userMapper.update(null, updateWrapper);
+        System.out.println(rows);
+        RespBean respBean = new RespBean();
+        if (rows != 1) {
+            respBean = respBean.error("密码修改失败");
+        } else {
+            respBean = respBean.success("密码修改成功");
         }
         return respBean;
     }
